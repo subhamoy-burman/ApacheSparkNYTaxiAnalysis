@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Confluent.Kafka" Version="2.0.2" />
+      <PackageReference Include="Microsoft.Spark" Version="2.1.1" />
+      <PackageReference Include="Microsoft.Spark.Extensions.Delta" Version="2.1.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.Spark">
+        <HintPath>..\..\..\Codebases\ApacheSpark\Microsoft.Spark.Worker-2.1.1\Microsoft.Spark.dll</HintPath>
+      </Reference>
+      <Reference Include="Microsoft.Spark.Worker">
+        <HintPath>..\..\..\Codebases\ApacheSpark\Microsoft.Spark.Worker-2.1.1\Microsoft.Spark.Worker.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>

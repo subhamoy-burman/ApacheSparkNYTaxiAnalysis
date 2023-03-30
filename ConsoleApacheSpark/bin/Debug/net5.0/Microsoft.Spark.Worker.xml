@@ -1,0 +1,481 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.Spark.Worker</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Spark.Worker.Command.CommandExecutorStat">
+            <summary>
+            CommandExecutorStat stores statistics information for executing a command payload.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Spark.Worker.Command.CommandExecutorStat.NumEntriesProcessed">
+            <summary>
+            Number of non-null entries received/processed.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Spark.Worker.Command.CommandExecutor">
+            <summary>
+            CommandExecutor reads input data from the input stream,
+            runs commands on them, and writes result to the output stream.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Command.CommandExecutor.Execute(System.IO.Stream,System.IO.Stream,System.Int32,Microsoft.Spark.Worker.CommandPayload)">
+            <summary>
+            Executes the commands on the input data read from input stream
+            and writes results to the output stream.
+            </summary>
+            <param name="inputStream">Input stream to read data from</param>
+            <param name="outputStream">Output stream to write results to</param>
+            <param name="splitIndex">Split index for this task</param>
+            <param name="commandPayload">Contains the commands to execute</param>
+            <returns>Statistics captured during the Execute() run</returns>
+        </member>
+        <member name="T:Microsoft.Spark.Worker.Command.RDDCommandExecutor">
+            <summary>
+            CommandExecutor reads input data from the input stream,
+            runs commands on them, and writes result to the output stream.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Command.RDDCommandExecutor.Execute(System.IO.Stream,System.IO.Stream,System.Int32,Microsoft.Spark.Worker.RDDCommand)">
+            <summary>
+            Executes the commands on the input data read from input stream
+            and writes results to the output stream.
+            </summary>
+            <param name="inputStream">Input stream to read data from</param>
+            <param name="outputStream">Output stream to write results to</param>
+            <param name="splitIndex">Split index for this task</param>
+            <param name="command">Contains the commands to execute</param>
+            <returns>Statistics captured during the Execute() run</returns>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Command.RDDCommandExecutor.GetInputIterator(System.IO.Stream,Microsoft.Spark.Utils.CommandSerDe.SerializedMode)">
+            <summary>
+            Create input iterator from the given input stream.
+            </summary>
+            <param name="inputStream">Stream to read from</param>
+            <param name="deserializerMode">Mode for deserialization</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Command.RDDCommandExecutor.WriteOutput(System.IO.Stream,Microsoft.Spark.Utils.CommandSerDe.SerializedMode,System.Object)">
+            <summary>
+            Writes the given message to the stream.
+            </summary>
+            <param name="stream">Stream to write to</param>
+            <param name="serializerMode">Mode for serialization</param>
+            <param name="message">Message to write to</param>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Command.RDDCommandExecutor.Serialize(Microsoft.Spark.Utils.CommandSerDe.SerializedMode,System.Object,System.IO.MemoryStream)">
+            <summary>
+            Serialize a row based on the given serializer mode.
+            </summary>
+            <param name="serializerMode"></param>
+            <param name="message"></param>
+            <param name="stream"></param>
+        </member>
+        <member name="T:Microsoft.Spark.Worker.Command.SqlCommandExecutor">
+            <summary>
+            SqlCommandExecutor reads input data from the input stream,
+            runs commands on them, and writes result to the output stream.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Command.SqlCommandExecutor.Execute(System.Version,System.IO.Stream,System.IO.Stream,Microsoft.Spark.Utils.UdfUtils.PythonEvalType,Microsoft.Spark.Worker.SqlCommand[])">
+            <summary>
+            Executes the commands on the input data read from input stream
+            and writes results to the output stream.
+            </summary>
+            <param name="version">Spark version</param>
+            <param name="inputStream">Input stream to read data from</param>
+            <param name="outputStream">Output stream to write results to</param>
+            <param name="evalType">Evaluation type for the current commands</param>
+            <param name="commands">Contains the commands to execute</param>
+            <returns>Statistics captured during the Execute() run</returns>
+        </member>
+        <member name="T:Microsoft.Spark.Worker.Command.PicklingSqlCommandExecutor">
+            <summary>
+            A SqlCommandExecutor that reads and writes using the
+            Python pickling format.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Command.PicklingSqlCommandExecutor.WriteOutput(System.IO.Stream,System.Collections.Generic.IEnumerable{System.Object},System.Int32)">
+            <summary>
+            Writes the given message to the stream.
+            </summary>
+            <param name="stream">Stream to write to</param>
+            <param name="rows">Rows to write to</param>
+            <param name="sizeHint">
+            Estimated max size of the serialized output.
+            If it's not big enough, pickler increases the buffer.
+            </param>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Command.PicklingSqlCommandExecutor.CreateCommandRunner(Microsoft.Spark.Worker.SqlCommand[])">
+            <summary>
+            Creates an ICommandRunner instance based on the given commands.
+            </summary>
+            <param name="commands">Commands used for creating a command runner</param>
+            <returns>An ICommandRunner instance</returns>
+        </member>
+        <member name="T:Microsoft.Spark.Worker.Command.PicklingSqlCommandExecutor.ICommandRunner">
+            <summary>
+            Interface for running commands.
+            On the Spark side, the following is expected for the Pickling to work:
+            If there is a single command (one UDF), the computed value is returned
+            as an object (one element). If there are multiple commands (multiple UDF scenario),
+            the computed value should be an array (not IEnumerable) where each element
+            in the array corresponds to the value returned by a command.
+            Refer to EvaluatePython.scala for StructType case.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Command.PicklingSqlCommandExecutor.ICommandRunner.Run(System.Int32,System.Object)">
+            <summary>
+            Runs commands based on the given split id and input.
+            </summary>
+            <param name="splitId">Split id for the commands to run</param>
+            <param name="input">Input data for the commands to run</param>
+            <returns>Value returned by running the commands</returns>
+        </member>
+        <member name="T:Microsoft.Spark.Worker.Command.PicklingSqlCommandExecutor.SingleCommandRunner">
+            <summary>
+            SingleCommandRunner handles running a single command.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Spark.Worker.Command.PicklingSqlCommandExecutor.SingleCommandRunner._command">
+            <summary>
+            A command to run.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Command.PicklingSqlCommandExecutor.SingleCommandRunner.#ctor(Microsoft.Spark.Worker.SqlCommand)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="command">A command to run</param>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Command.PicklingSqlCommandExecutor.SingleCommandRunner.Run(System.Int32,System.Object)">
+            <summary>
+            Runs a single command.
+            </summary>
+            <param name="splitId">Split id for the command to run</param>
+            <param name="input">Input data for the command to run</param>
+            <returns>Value returned by running the command</returns>
+        </member>
+        <member name="T:Microsoft.Spark.Worker.Command.PicklingSqlCommandExecutor.MultiCommandRunner">
+            <summary>
+            MultiCommandRunner handles running multiple commands.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Spark.Worker.Command.PicklingSqlCommandExecutor.MultiCommandRunner._commands">
+            <summary>
+            Commands to run.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Command.PicklingSqlCommandExecutor.MultiCommandRunner.#ctor(Microsoft.Spark.Worker.SqlCommand[])">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="commands">Multiple commands top run</param>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Command.PicklingSqlCommandExecutor.MultiCommandRunner.Run(System.Int32,System.Object)">
+            <summary>
+            Runs multiple commands.
+            </summary>
+            <param name="splitId">Split id for the commands to run</param>
+            <param name="input">Input data for the commands to run</param>
+            <returns>An array of values returned by running the commands</returns>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Command.ArrowOrDataFrameSqlCommandExecutor.GetArrowInputIterator(System.IO.Stream)">
+            <summary>
+            Create input iterator from the given input stream.
+            </summary>
+            <param name="inputStream">Stream to read from</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Command.ArrowOrDataFrameSqlCommandExecutor.CreateCommandRunner(Microsoft.Spark.Worker.SqlCommand[])">
+            <summary>
+            Creates an ICommandRunner instance based on the given commands.
+            </summary>
+            <param name="commands">Commands used for creating a command runner</param>
+            <returns>An ICommandRunner instance</returns>
+        </member>
+        <member name="T:Microsoft.Spark.Worker.Command.ArrowOrDataFrameSqlCommandExecutor.ICommandRunner">
+            <summary>
+            Interface for running commands.
+            On the Spark side, the following is expected for the Pickling to work:
+            If there is a single command (one UDF), the computed value is returned
+            as an object (one element). If there are multiple commands (multiple UDF scenario),
+            the computed value should be an array (not IEnumerable) where each element
+            in the array corresponds to the value returned by a command.
+            Refer to EvaluatePython.scala for StructType case.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Command.ArrowOrDataFrameSqlCommandExecutor.ICommandRunner.Run(System.ReadOnlyMemory{Apache.Arrow.IArrowArray})">
+            <summary>
+            Runs commands based on the given split id and input.
+            </summary>
+            <param name="input">Input data for the commands to run</param>
+            <returns>Value returned by running the commands</returns>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Command.ArrowOrDataFrameSqlCommandExecutor.ICommandRunner.Run(System.ReadOnlyMemory{Microsoft.Data.Analysis.DataFrameColumn})">
+            <summary>
+            Runs commands based on the given split id and input.
+            </summary>
+            <param name="input">Input data for the commands to run</param>
+            <returns>Value returned by running the commands</returns>
+        </member>
+        <member name="T:Microsoft.Spark.Worker.Command.ArrowOrDataFrameSqlCommandExecutor.SingleCommandRunner">
+            <summary>
+            SingleCommandRunner handles running a single command.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Spark.Worker.Command.ArrowOrDataFrameSqlCommandExecutor.SingleCommandRunner._command">
+            <summary>
+            A command to run.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Command.ArrowOrDataFrameSqlCommandExecutor.SingleCommandRunner.#ctor(Microsoft.Spark.Worker.SqlCommand)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="command">A command to run</param>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Command.ArrowOrDataFrameSqlCommandExecutor.SingleCommandRunner.Run(System.ReadOnlyMemory{Apache.Arrow.IArrowArray})">
+            <summary>
+            Runs a single command.
+            </summary>
+            <param name="input">Input data for the command to run</param>
+            <returns>Value returned by running the command</returns>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Command.ArrowOrDataFrameSqlCommandExecutor.SingleCommandRunner.Run(System.ReadOnlyMemory{Microsoft.Data.Analysis.DataFrameColumn})">
+            <summary>
+            Runs a single command.
+            </summary>
+            <param name="input">Input data for the command to run</param>
+            <returns>Value returned by running the command</returns>
+        </member>
+        <member name="T:Microsoft.Spark.Worker.Command.ArrowOrDataFrameSqlCommandExecutor.MultiCommandRunner">
+            <summary>
+            MultiCommandRunner handles running multiple commands.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Spark.Worker.Command.ArrowOrDataFrameSqlCommandExecutor.MultiCommandRunner._commands">
+            <summary>
+            Commands to run.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Command.ArrowOrDataFrameSqlCommandExecutor.MultiCommandRunner.#ctor(Microsoft.Spark.Worker.SqlCommand[])">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="commands">Multiple commands top run</param>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Command.ArrowOrDataFrameSqlCommandExecutor.MultiCommandRunner.Run(System.ReadOnlyMemory{Apache.Arrow.IArrowArray})">
+            <summary>
+            Runs multiple commands.
+            </summary>
+            <param name="input">Input data for the commands to run</param>
+            <returns>An array of values returned by running the commands</returns>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Command.ArrowOrDataFrameSqlCommandExecutor.MultiCommandRunner.Run(System.ReadOnlyMemory{Microsoft.Data.Analysis.DataFrameColumn})">
+            <summary>
+            Runs multiple commands.
+            </summary>
+            <param name="input">Input data for the commands to run</param>
+            <returns>An array of values returned by running the commands</returns>
+        </member>
+        <member name="T:Microsoft.Spark.Worker.DaemonWorker">
+            <summary>
+            DaemonWorker provides functionalities equivalent to PySpark's daemon server.
+            Refer to Spark's PythonWorkerFactory.scala for how Spark creates daemon
+            server and interacts with it.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Spark.Worker.DaemonWorker._taskRunners">
+            <summary>
+            Keeps track of all the TaskRunner objects identified by the its Id.
+            The main thread creates a TaskRunner each time it receives a new socket
+            connection from JVM side and inserts it into _taskRunners, whereas
+            each worker thread removes from it when TaskRunner.Run() is finished, thus
+            _taskRunners is using ConcurrentDictionary.
+            Also, _taskRunners is used to bound the number of worker threads since it
+            gives you the total number of active TaskRunners.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Spark.Worker.DaemonWorker._waitingTaskRunners">
+            <summary>
+            Each worker thread picks up the TaskRunner from _waitingTaskRunners
+            and runs it.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.DaemonWorker.Run">
+            <summary>
+            Runs the DaemonWorker server.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.DaemonWorker.StartServer(Microsoft.Spark.Network.ISocketWrapper)">
+            <summary>
+            Starts listening to any connection from JVM.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.DaemonWorker.RunWorkerThread">
+            <summary>
+            RunWorkerThread() is called for each worker thread when it starts.
+            RunWorkerThread() doesn't return (except for the error cases), and
+            keeps pulling from _waitingTaskRunners and runs the retrieved TaskRunner.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.DaemonWorker.WaitForSignal">
+            <summary>
+            The main thread call this to wait for any signals from JVM.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Spark.Worker.BroadcastVariables">
+            <summary>
+            BroadcastVariables stores information on broadcast variables.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Spark.Worker.CommandBase">
+            <summary>
+            Base class for capturing command information.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Spark.Worker.SqlCommand">
+            <summary>
+            SqlCommand stores UDF-related information for SQL.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Spark.Worker.RDDCommand">
+            <summary>
+            RDDCommand stores UDF-related information for RDD.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Spark.Worker.CommandPayload">
+            <summary>
+            CommandPayload stores information on multiple commands.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Spark.Worker.Payload">
+            <summary>
+            Payload stores information sent to the worker from JVM.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Processor.BroadcastVariableProcessor.Process(System.IO.Stream)">
+            <summary>
+            Reads the given stream to construct a BroadcastVariables object.
+            </summary>
+            <param name="stream">The stream to read from</param>
+            <returns>BroadcastVariables object</returns>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Processor.CommandProcessor.Process(System.IO.Stream)">
+            <summary>
+            Reads the given stream to construct a CommandPayload object.
+            </summary>
+            <param name="stream">The stream to read from</param>
+            <returns>CommandPayload object</returns>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Processor.CommandProcessor.ReadRDDCommand(System.IO.Stream)">
+            <summary>
+            Read one RDDCommand from the stream.
+            </summary>
+            <param name="stream">Stream to read from</param>
+            <returns>RDDCommand object</returns>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Processor.CommandProcessor.ReadSqlCommands(Microsoft.Spark.Utils.UdfUtils.PythonEvalType,System.IO.Stream,System.Version)">
+            <summary>
+            Read SqlCommands from the stream based on the given version.
+            </summary>
+            <param name="evalType">Evaluation type for the current commands</param>
+            <param name="stream">Stream to read from</param>
+            <param name="version">Spark version</param>
+            <returns>SqlCommand objects</returns>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Processor.CommandProcessor.ReadSqlCommands(Microsoft.Spark.Utils.UdfUtils.PythonEvalType,System.IO.Stream)">
+            <summary>
+            Read SqlCommands from the stream.
+            </summary>
+            <param name="stream">Stream to read from</param>
+            <param name="evalType">Evaluation type for the current commands</param>
+            <returns>SqlCommand objects</returns>
+        </member>
+        <member name="T:Microsoft.Spark.Worker.Processor.PayloadProcessor">
+            <summary>
+            PayloadProcessor reads the stream and constructs a Payload object.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Processor.PayloadProcessor.Process(System.IO.Stream)">
+            <summary>
+            Processes the given stream to construct a Payload object.
+            </summary>
+            <param name="stream">The stream to read from</param>
+            <returns>
+            Returns a valid payload object if the stream contains all the necessary data.
+            Returns null if the stream is already closed at the beginning of the read.
+            </returns>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Processor.PayloadProcessor.ReadIncludeItems(System.IO.Stream)">
+            <summary>
+            Reads the given stream to construct a string array of the include items.
+            </summary>
+            <param name="stream">The stream to read from</param>
+            <returns>Array of include items</returns>
+        </member>
+        <member name="T:Microsoft.Spark.Worker.TaskRunner">
+            <summary>
+            TaskRunner is used to run Spark task assigned by JVM side. It uses a TCP socket to
+            communicate with JVM side. This socket may be reused to run multiple Spark tasks.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Utils.AssemblyLoaderHelper.#cctor">
+            <summary>
+            Register the AssemblyLoader.ResolveAssembly handler to handle the
+            event when assemblies fail to load in the current assembly load context.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Utils.AssemblyLoaderHelper.RegisterAssemblyHandler">
+             <summary>
+             In a dotnet-interactive REPL session (driver), nuget dependencies will be
+             systematically added using <see cref="M:Microsoft.Spark.SparkContext.AddFile(System.String,System.Boolean)"/>.
+            
+             These files include:
+             - "{packagename}.{version}.nupkg"
+               The nuget packages
+             - <see cref="M:Microsoft.Spark.Utils.DependencyProviderUtils.CreateFileName(System.Int64)"/>
+               Serialized <see cref="T:Microsoft.Spark.Utils.DependencyProviderUtils.Metadata"/> object.
+            
+             On the Worker, in order to resolve the nuget dependencies referenced by
+             the dotnet-interactive session, we instantiate a
+             <see cref="T:Microsoft.DotNet.DependencyManager.DependencyProvider"/>.
+             This provider will register an event handler to the Assembly Load Resolving event.
+             By using <see cref="M:Microsoft.Spark.SparkFiles.GetRootDirectory"/>, we can access the
+             required files added to the <see cref="T:Microsoft.Spark.SparkContext"/>.
+             </summary>
+        </member>
+        <member name="T:Microsoft.Spark.Worker.Utils.DependencyProvider">
+             <summary>
+             <see cref="T:Microsoft.Spark.Worker.Utils.DependencyProvider"/> sets up and creates a new
+             <see cref="T:Microsoft.DotNet.DependencyManager.DependencyProvider"/>.
+            
+             The following steps outline the process:
+             - Deserializes a <see cref="T:Microsoft.Spark.Utils.DependencyProviderUtils.Metadata"/>.
+             - Uses <see cref="P:Microsoft.Spark.Utils.DependencyProviderUtils.Metadata.NuGets"/> to unpack required
+               nugets.
+             - Uses <see cref="P:Microsoft.Spark.Utils.DependencyProviderUtils.Metadata.AssemblyProbingPaths"/> and
+               <see cref="P:Microsoft.Spark.Utils.DependencyProviderUtils.Metadata.NativeProbingPaths"/> to construct
+               a <see cref="T:Microsoft.DotNet.DependencyManager.DependencyProvider"/>.
+             </summary>
+        </member>
+        <member name="T:Microsoft.Spark.Worker.Utils.FilePrinter">
+            <summary>
+            FilePrinter is responsible for getting printable string for the filesystem.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Spark.Worker.Utils.FilePrinter.GetString">
+            <summary>
+            Returns the string that displays the files from the current working directory.
+            </summary>
+            <returns>String that captures files info.</returns>
+        </member>
+        <member name="T:Microsoft.Spark.Worker.Utils.SettingUtils">
+            <summary>
+            Provides functionalities to retrieve various settings.
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,75 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/burmas3/CodePractices/ConsoleApacheSpark/ConsoleApacheSpark/ConsoleApacheSpark.csproj": {}
+  },
+  "projects": {
+    "/Users/burmas3/CodePractices/ConsoleApacheSpark/ConsoleApacheSpark/ConsoleApacheSpark.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/burmas3/CodePractices/ConsoleApacheSpark/ConsoleApacheSpark/ConsoleApacheSpark.csproj",
+        "projectName": "ConsoleApacheSpark",
+        "projectPath": "/Users/burmas3/CodePractices/ConsoleApacheSpark/ConsoleApacheSpark/ConsoleApacheSpark.csproj",
+        "packagesPath": "/Users/burmas3/.nuget/packages/",
+        "outputPath": "/Users/burmas3/CodePractices/ConsoleApacheSpark/ConsoleApacheSpark/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/burmas3/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net5.0"
+        ],
+        "sources": {
+          "/usr/local/share/dotnet/library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net5.0": {
+            "targetAlias": "net5.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net5.0": {
+          "targetAlias": "net5.0",
+          "dependencies": {
+            "Confluent.Kafka": {
+              "target": "Package",
+              "version": "[2.0.2, )"
+            },
+            "Microsoft.Spark": {
+              "target": "Package",
+              "version": "[2.1.1, )"
+            },
+            "Microsoft.Spark.Extensions.Delta": {
+              "target": "Package",
+              "version": "[2.1.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/5.0.408/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
